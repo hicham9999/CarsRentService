@@ -30,15 +30,11 @@ public class MonWebService {
     }
 
     @GetMapping("/cars")
-    ArrayList<Car> getListOfCars() {
-        return cars;
+    Iterable<Car> getListOfCars() {
+        return carRepository.findAll();
     }
 
-    @GetMapping("/cars/{plaque}")
-    Car getCar(@PathVariable(value = "plaque") String immatriculation) {
-        System.out.println(immatriculation);
-        return null;
-    }
+
     @ResponseStatus(value= HttpStatus.NOT_FOUND, reason="Car not found")  // 404
     @ExceptionHandler(Exception.class)
     public void erreur() {
@@ -46,16 +42,11 @@ public class MonWebService {
     }
 
     @GetMapping("/cars/{plateNumber}")
-    public String liste(
+    public Car liste(
             @PathVariable("plateNumber") String plateNumber,
-            @RequestParam(value = "rent", required = true) boolean rent) throws Exception {
+            @RequestParam(value = "rent", required = false) boolean rent) throws Exception {
         System.out.println(plateNumber);
         System.out.println(rent);
-        for(Car car: cars){
-            if(car.getPlateNumber().equals(plateNumber)){
-                return "zregrze";
-            }
-        }
-        throw new Exception();
+        return carRepository.findById(plateNumber).get();
     }
 }
